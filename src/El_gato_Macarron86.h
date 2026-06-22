@@ -287,6 +287,162 @@ public:
                 }
             }
         }
+        else if (!marcadores.at(nombre).yaAnotado("senas")) {
+            
+            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
+                if (actuacionesPosibles[i].accion == "lanzar") {
+                    
+                    if (maxRepetidos == 3 && NumRep == 6) {
+                        int cuantosLanzo = 0;
+                        bool lanzaOtrosDadosUtiles = false;
+
+                        for (int j : actuacionesPosibles[i].indiceDados) {
+                            if (dados[j] != NumRep ) {
+                                cuantosLanzo++;
+                            } else {
+                                
+                                lanzaOtrosDadosUtiles = true; 
+                            }
+                        }
+                       
+                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
+                            mejorOpcionLanzar = i;
+                            break;
+                        }
+                    }    
+                }
+            }
+        }
+        else if (!marcadores.at(nombre).yaAnotado("quinas")) {
+            
+            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
+                if (actuacionesPosibles[i].accion == "lanzar") {
+                    
+                    if (maxRepetidos == 3 && NumRep == 5) {
+                        int cuantosLanzo = 0;
+                        bool lanzaOtrosDadosUtiles = false;
+
+                        for (int j : actuacionesPosibles[i].indiceDados) {
+                            if (dados[j] != NumRep ) {
+                                cuantosLanzo++;
+                            } else {
+                                // Si intenta tirar un dado del trío, está mal
+                                lanzaOtrosDadosUtiles = true; 
+                            }
+                        }
+                       
+                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
+                            mejorOpcionLanzar = i;
+                            break;
+                        }
+                    }    
+                }
+            }
+        }
+        else if (!marcadores.at(nombre).yaAnotado("cuadras")) {
+            
+            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
+                if (actuacionesPosibles[i].accion == "lanzar") {
+                    
+                    if (maxRepetidos == 3 && NumRep == 4) {
+                        int cuantosLanzo = 0;
+                        bool lanzaOtrosDadosUtiles = false;
+
+                        for (int j : actuacionesPosibles[i].indiceDados) {
+                            if (dados[j] != NumRep ) {
+                                cuantosLanzo++;
+                            } else {
+                                // Si intenta tirar un dado del trío, está mal
+                                lanzaOtrosDadosUtiles = true; 
+                            }
+                        }
+                       
+                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
+                            mejorOpcionLanzar = i;
+                            break;
+                        }
+                    }    
+                }
+            }
+        }
+        else if (!marcadores.at(nombre).yaAnotado("trenes")) {
+            
+            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
+                if (actuacionesPosibles[i].accion == "lanzar") {
+                    
+                    if (maxRepetidos == 3 && NumRep == 3) {
+                        int cuantosLanzo = 0;
+                        bool lanzaOtrosDadosUtiles = false;
+
+                        for (int j : actuacionesPosibles[i].indiceDados) {
+                            if (dados[j] != NumRep ) {
+                                cuantosLanzo++;
+                            } else {
+                                // Si intenta tirar un dado del trío, está mal
+                                lanzaOtrosDadosUtiles = true; 
+                            }
+                        }
+                       
+                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
+                            mejorOpcionLanzar = i;
+                            break;
+                        }
+                    }    
+                }
+            }
+        }
+        else if (!marcadores.at(nombre).yaAnotado("tontos")) {
+            
+            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
+                if (actuacionesPosibles[i].accion == "lanzar") {
+                    
+                    if (maxRepetidos == 3 && NumRep == 2) {
+                        int cuantosLanzo = 0;
+                        bool lanzaOtrosDadosUtiles = false;
+
+                        for (int j : actuacionesPosibles[i].indiceDados) {
+                            if (dados[j] != NumRep ) {
+                                cuantosLanzo++;
+                            } else {
+                                // Si intenta tirar un dado del trío, está mal
+                                lanzaOtrosDadosUtiles = true; 
+                            }
+                        }
+                       
+                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
+                            mejorOpcionLanzar = i;
+                            break;
+                        }
+                    }    
+                }
+            }
+        }
+        else if (!marcadores.at(nombre).yaAnotado("balas")) {
+            
+            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
+                if (actuacionesPosibles[i].accion == "lanzar") {
+                    
+                    if (maxRepetidos == 3 && NumRep == 1) {
+                        int cuantosLanzo = 0;
+                        bool lanzaOtrosDadosUtiles = false;
+
+                        for (int j : actuacionesPosibles[i].indiceDados) {
+                            if (dados[j] != NumRep ) {
+                                cuantosLanzo++;
+                            } else {
+                                // Si intenta tirar un dado del trío, está mal
+                                lanzaOtrosDadosUtiles = true; 
+                            }
+                        }
+                       
+                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
+                            mejorOpcionLanzar = i;
+                            break;
+                        }
+                    }    
+                }
+            }
+        }
         if (mejorOpcionLanzar != -1) {
             return mejorOpcionLanzar;
         }
@@ -348,12 +504,12 @@ public:
             }
         }
         if (indiceMejorPuntaje == -1){
-            std::vector<std::string> prioridad = {"balas", "tontos", "trenes", "cuadras", "quinas", "senas"};
+            std::vector<std::string> prioridad = {"balas", "tontos", "trenes", "cuadras", "quinas", "senas", "escalera", "full", "poker", "grande", "grande2"};
             bool encontrado = false;
             for (const std::string& jugada : prioridad) {
                 for (size_t i = 0; i < actuacionesPosibles.size(); ++i) {
                     if (actuacionesPosibles[i].accion == "anotar" && 
-                        actuacionesPosibles[i].anotacion.juego == jugada) {
+                        actuacionesPosibles[i].anotacion.juego == jugada && actuacionesPosibles[i].anotacion.puntos > 0) {
                         
                         indiceMejorPuntaje = i;
                         encontrado = true;
