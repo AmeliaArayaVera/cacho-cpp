@@ -20,7 +20,7 @@ public:
     int jugar(const std::map<std::string, Marcador> &marcadores,
               const std::vector<Actuacion> &actuacionesPosibles,
               const std::vector<int> &dados,
-              const Anotacion &resultadoPrevio) override {
+              const Anotacion &) override {
 
         
         for (size_t i = 0; i < actuacionesPosibles.size(); ++i) {
@@ -535,8 +535,7 @@ public:
             if (!marcadores.at(nombre).yaAnotado(jugadaATachar)) {
                 for (size_t i = 0; i < actuacionesPosibles.size(); ++i) {
                     if (actuacionesPosibles[i].accion == "tachar" && 
-                        (actuacionesPosibles[i].anotacion.juego == jugadaATachar || 
-                         actuacionesPosibles[i].anotacion.juego == (std::string(1, toupper(jugadaATachar[0])) + jugadaATachar.substr(1)))) {
+                        (actuacionesPosibles[i].anotacion.juego == jugadaATachar )) {
                         return i;
                     }
                 }
