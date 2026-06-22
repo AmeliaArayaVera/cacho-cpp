@@ -1,5 +1,6 @@
 #include "JugadorAleatorio.h"
 #include "Tournament.h"
+#include "El_gato_Macarron86.h"
 #include <iostream>
 #include <memory>
 
@@ -11,7 +12,7 @@ int main() {
   t.addPlayer(
       []() { return std::make_shared<JugadorAleatorio>("Bot_Random_2"); });
   t.addPlayer(
-      []() { return std::make_shared<JugadorAleatorio>("Bot_Random_3"); });
+      []() { return std::make_shared<El_gato_Macarron86>("Macarron_supremo"); });
 
   std::cout << "Starting simulation with 3 Random Players (100 matches)..."
             << std::endl;
