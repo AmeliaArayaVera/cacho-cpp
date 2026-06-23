@@ -157,8 +157,7 @@ public:
             for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
                 if (actuacionesPosibles[i].accion == "lanzar") {
                     
-                    // CASO 1: Tenemos un trío listo (ej: [4, 4, 4, 1, 2]). 
-                    // Queremos lanzar EXACTAMENTE UNO de los dos dados que no se repiten.
+                    
                     if (maxRepetidos == 3) {
                         int cuantosDelDuoLanza = 0;
                         bool lanzaOtrosDadosUtiles = false;
@@ -170,42 +169,33 @@ public:
                                 // Si intenta tirar un dado del trío, está mal
                                 lanzaOtrosDadosUtiles = true; 
                             }
-                        }
+                        } 
                         
-                        // CORRECCIÓN: Para maximizar, cambiamos el '2' por '1'. 
-                        // Lanzamos solo 1 dado basura, conservando el otro.
                         if (cuantosDelDuoLanza == 1 && !lanzaOtrosDadosUtiles) {
                             mejorOpcionLanzar = i;
                             break;
                         }
                     }
                     
-                    // CASO 2: Tenemos doble pareja (ej: [4, 4, 2, 2, 1]).
-                    // Queremos lanzar el único dado suelto (el que NO pertenece a ninguna pareja).
                     else if (maxRepetidos == 2 && segundoNum_repetido_mismas_veces != -1) {
                         int lanzaDelPrimero = 0;
                         bool lanzaOtrosDados = false;
 
                         for (int j : actuacionesPosibles[i].indiceDados) {
-                            // CORRECCIÓN: Usamos '&&' en lugar de '||'. 
-                            // Entra si el dado NO es de la pareja 1 Y TAMPOCO de la pareja 2.
+                            
                             if (dados[j] != NumRep && dados[j] != segundoNum_repetido_mismas_veces) {
                                 lanzaDelPrimero++;
                             } else {
-                                // Si intenta tocar cualquiera de las dos parejas, no nos sirve
+                                
                                 lanzaOtrosDados = true; 
                             }
                         }
-
-                        // Queremos lanzar exactamente ese único dado suelto
                         if (lanzaDelPrimero == 1 && !lanzaOtrosDados) {
                             mejorOpcionLanzar = i;
                             break; 
                         }
                     }
-                    
-                    // CASO 3: Solo tenemos una pareja (ej: [4, 4, 1, 2, 3]).
-                    // Tu lógica original que ya estaba perfecta.
+            
                     else if (maxRepetidos == 2 && segundoNum_repetido_mismas_veces == -1) {
                         int lanzaDelPrimero = 0;
                         bool lanzaOtrosDados = false;
@@ -231,9 +221,7 @@ public:
             
             for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
                 if (actuacionesPosibles[i].accion == "lanzar") {
-                    
-                    // CASO 1: Tenemos doble pareja (ej: [2, 2, 5, 5, 1]). 
-                    // Queremos lanzar UN dado del primer par y UN dado del segundo par para buscar cartas nuevas.
+            
                     if (maxRepetidos == 2 && segundoNum_repetido_mismas_veces != -1) {
                         int lanzaDelPrimero = 0;
                         int lanzaDelSegundo = 0;
@@ -245,15 +233,11 @@ public:
                             else lanzaOtrosDados = true;
                         }
 
-                        // Si la opción lanza exactamente 1 del primero, 1 del segundo y no toca el resto
                         if (lanzaDelPrimero == 1 && lanzaDelSegundo == 1 && !lanzaOtrosDados) {
                             mejorOpcionLanzar = i;
                             break; 
                         }
                     }
-                    
-                    // CASO 2: Solo hay una pareja (ej: [2, 2, 3, 4, 6]).
-                    // Queremos lanzar exactamente UN dado de esa pareja que se repite.
                     else if (maxRepetidos == 2 && segundoNum_repetido_mismas_veces == -1) {
                         if (actuacionesPosibles[i].indiceDados.size() == 1) {
                             int posicionDelDado = actuacionesPosibles[i].indiceDados[0];
@@ -264,8 +248,6 @@ public:
                         }
                     }
                     
-                    // CASO 3: Tenemos un trío (ej: [2, 2, 2, 4, 5]).
-                    // Queremos lanzar exactamente DOS dados de ese trío para conservar solo uno.
                     else if (maxRepetidos == 3) {
                         int cuantosDelTrioLanza = 0;
                         bool lanzaOtrosDadosUtiles = false;
@@ -277,8 +259,6 @@ public:
                                 lanzaOtrosDadosUtiles = true;
                             }
                         }
-
-                        // Si lanza exactamente 2 dados del trío y mantiene intactos los otros números útiles
                         if (cuantosDelTrioLanza == 2 && !lanzaOtrosDadosUtiles) {
                             mejorOpcionLanzar = i;
                             break;
@@ -430,7 +410,7 @@ public:
                             if (dados[j] != NumRep ) {
                                 cuantosLanzo++;
                             } else {
-                                // Si intenta tirar un dado del trío, está mal
+                                
                                 lanzaOtrosDadosUtiles = true; 
                             }
                         }
@@ -454,7 +434,7 @@ public:
                 }
             }
         }
-        // 4. Estrategia de Respaldo: Si hay que anotar en los laterales o tachar
+        
         
         int indiceMejorPuntaje = -1;
 
