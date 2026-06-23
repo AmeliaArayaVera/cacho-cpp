@@ -22,13 +22,13 @@ public:
               const std::vector<int> &dados,
               const Anotacion &) override {
 
-        
+        // si sale casualmente una dormida, la tomamos
         for (size_t i = 0; i < actuacionesPosibles.size(); ++i) {
             if (actuacionesPosibles[i].accion == "dormida") {
                 return i; 
             }
         }
-
+        //lo mismo aqui, pero con uno orden de prioridad por puntaje escogemos nuestra anotación 
         for (size_t i = 0; i < actuacionesPosibles.size(); ++i) {
             const auto& act = actuacionesPosibles[i];
             if (act.accion == "anotar") {
@@ -54,7 +54,7 @@ public:
                 }
             }
         }
-
+        // aqui usare la cantidad de cada numero de dado para analizar que tirar según jugada posible en el momento 
         int cant_de_cada_num[7] = {0};
         for(int i = 0; i < 5; i++){
             cant_de_cada_num[dados[i]]++;
@@ -72,13 +72,18 @@ public:
                 segundoNum_repetido_mismas_veces = numero;
             }
         }
+        // con lo anterior analice si hay 1 numero repetido x veces, o si hay 2 numeros (en este caso si es que estos 2 se repiten 2 veces, ya que si fuera 3 rep y 2 rep ya es una jugada (al menos antes de anotar))
         int mejorOpcionLanzar = -1;
-
+        //en estos bloques tomaremos decisiones de que hacer con las tiradas si tengo alguna anotación x disponible 
+        //y estas decisiones dependen de que tantos repetidos hay en mi mano, y eso filtra si vale la pena o no la jugada
         if (!marcadores.at(nombre).yaAnotado("grande")) {
             
             for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
                 if (actuacionesPosibles[i].accion == "lanzar") {
-                    
+                    //esto solo pasa si hay 4 repetidos, cuando es mas probable sacar los 5 repetidos
+                    //ya que en otros casos segun yo es más probable que salga otra jugada
+
+                    //con lo siguiente encuentro una lanzada de dados que cumpla en este caso que sea lanzar 1 dado que no sea de los repetidos 
                     if (maxRepetidos == 4) {
                         int cuantosLanzo = 0;
                         bool lanzaOtrosDadosUtiles = false;
@@ -87,7 +92,7 @@ public:
                             if (dados[j] != NumRep) {
                                 cuantosLanzo++;
                             } else {
-                                // Si intenta tirar un dado del trío, está mal
+                                
                                 lanzaOtrosDadosUtiles = true; 
                             }
                         }
@@ -101,7 +106,7 @@ public:
             }
         }
         else if (!marcadores.at(nombre).yaAnotado("grande2")) {
-            
+            //este es exactamente igual al anterior 
             for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
                 if (actuacionesPosibles[i].accion == "lanzar") {
                     
@@ -113,7 +118,7 @@ public:
                             if (dados[j] != NumRep) {
                                 cuantosLanzo++;
                             } else {
-                                // Si intenta tirar un dado del trío, está mal
+                                
                                 lanzaOtrosDadosUtiles = true; 
                             }
                         }
@@ -139,7 +144,7 @@ public:
                             if (dados[j] != NumRep) {
                                 cuantosDelDuoLanza++;
                             } else {
-                                // Si intenta tirar un dado del trío, está mal
+                                
                                 lanzaOtrosDadosUtiles = true; 
                             }
                         }
@@ -306,7 +311,7 @@ public:
                             if (dados[j] != NumRep ) {
                                 cuantosLanzo++;
                             } else {
-                                // Si intenta tirar un dado del trío, está mal
+                                
                                 lanzaOtrosDadosUtiles = true; 
                             }
                         }
@@ -358,7 +363,7 @@ public:
                             if (dados[j] != NumRep ) {
                                 cuantosLanzo++;
                             } else {
-                                // Si intenta tirar un dado del trío, está mal
+                                
                                 lanzaOtrosDadosUtiles = true; 
                             }
                         }
@@ -384,7 +389,7 @@ public:
                             if (dados[j] != NumRep ) {
                                 cuantosLanzo++;
                             } else {
-                                // Si intenta tirar un dado del trío, está mal
+                                
                                 lanzaOtrosDadosUtiles = true; 
                             }
                         }
