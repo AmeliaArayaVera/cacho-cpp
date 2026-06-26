@@ -17,7 +17,7 @@ int main() {
   std::cout << "Starting simulation with 3 Random Players (100 matches)..."
             << std::endl;
 
-  t.run(100);
+  t.run(10000);
   t.displayResults();
 
   return 0;

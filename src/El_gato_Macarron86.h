@@ -59,6 +59,21 @@ public:
         for(int i = 0; i < 5; i++){
             cant_de_cada_num[dados[i]]++;
         }
+        int cant_con_volteos[7] = {0};
+        for(int numero = 1; numero <= 6; numero++) {
+            cant_con_volteos[numero] = cant_de_cada_num[numero];
+        }
+
+        // esto calcula los dados sueltos y como seria la mano si los volteamos
+        for(int i = 0; i < 5; i++) {
+            int valorDado = dados[i];
+            if (cant_de_cada_num[valorDado] == 1) { 
+                int caraOpuesta = 7 - valorDado;
+                
+                cant_con_volteos[valorDado]--;
+                cant_con_volteos[caraOpuesta]++;
+            }
+        }
         int NumRep = -1;
         int maxRepetidos = -1;
         int segundoNum_repetido_mismas_veces = -1;
@@ -76,67 +91,55 @@ public:
         int mejorOpcionLanzar = -1;
         //en estos bloques tomaremos decisiones de que hacer con las tiradas si tengo alguna anotación x disponible 
         //y estas decisiones dependen de que tantos repetidos hay en mi mano, y eso filtra si vale la pena o no la jugada
-        if (!marcadores.at(nombre).yaAnotado("grande")) {
-            
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    //esto solo pasa si hay 4 repetidos, cuando es mas probable sacar los 5 repetidos
-                    //ya que en otros casos segun yo es más probable que salga otra jugada
 
-                    //con lo siguiente encuentro una lanzada de dados que cumpla en este caso que sea lanzar 1 dado que no sea de los repetidos 
-                    if (maxRepetidos == 4) {
+        std::vector<std::string> listaGrandes = {"grande", "grande2"};
+        for (const auto& g : listaGrandes) {
+            if (mejorOpcionLanzar != -1) break;
+            if (!marcadores.at(nombre).yaAnotado(g)) {
+                for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
+                    if (actuacionesPosibles[i].accion == "lanzar" && maxRepetidos == 4) {
+                        //esta decision solo pasa si hay 4 repetidos, cuando es mas probable sacar los 5 repetidos
+                        //ya que en otros casos segun yo es más probable que salga otra jugada
+
+                        //con lo siguiente encuentro una lanzada de dados que cumpla en este caso que sea lanzar 1 dado que no sea de los repetidos 
                         int cuantosLanzo = 0;
                         bool lanzaOtrosDadosUtiles = false;
-
                         for (int j : actuacionesPosibles[i].indiceDados) {
-                            if (dados[j] != NumRep) {
-                                cuantosLanzo++;
-                            } else {
-                                
-                                lanzaOtrosDadosUtiles = true; 
-                            }
+                            if (dados[j] != NumRep) cuantosLanzo++;
+                            else lanzaOtrosDadosUtiles = true;
                         }
-                       
                         if (cuantosLanzo == 1 && !lanzaOtrosDadosUtiles) {
                             mejorOpcionLanzar = i;
                             break;
                         }
-                    }    
-                }
-            }
-        }
-        else if (!marcadores.at(nombre).yaAnotado("grande2")) {
-            //este es exactamente igual al anterior 
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    
-                    if (maxRepetidos == 4) {
+                    }
+                    else if (maxRepetidos == 3 && cant_con_volteos[NumRep] == 4) { // esto es cuando si hay un numero que volteado es el repetido
                         int cuantosLanzo = 0;
-                        bool lanzaOtrosDadosUtiles = false;
-
+                        bool lanzaDadosobrante = false;
+                        
                         for (int j : actuacionesPosibles[i].indiceDados) {
-                            if (dados[j] != NumRep) {
+                            // y aqui creo que conviene lanzar el que no es el numero ni el volteado, para no perder mi jugada/posible jugada
+                            if (dados[j] != NumRep && (7 - dados[j] != NumRep)) {
                                 cuantosLanzo++;
-                            } else {
-                                
-                                lanzaOtrosDadosUtiles = true; 
+                                lanzaDadosobrante = true;
                             }
                         }
-                       
-                        if (cuantosLanzo == 1 && !lanzaOtrosDadosUtiles) {
+                        
+                        if (cuantosLanzo == 1 && lanzaDadosobrante) {
                             mejorOpcionLanzar = i;
                             break;
                         }
-                    }    
+                    } 
                 }
             }
         }
-        else if (!marcadores.at(nombre).yaAnotado("poker")) {
+        
+        if (!marcadores.at(nombre).yaAnotado("poker")) {
             
             for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
                 if (actuacionesPosibles[i].accion == "lanzar") {
                     
-                    if (maxRepetidos == 3) {
+                    if (maxRepetidos == 3 && cant_con_volteos[NumRep] == 3) { //no hay volteo que sirva y hay varios repetidos de un num.
                         int cuantosDelDuoLanza = 0;
                         bool lanzaOtrosDadosUtiles = false;
 
@@ -153,6 +156,23 @@ public:
                             mejorOpcionLanzar = i;
                             break;
                         }
+                    }
+                    else if (maxRepetidos == 3 && cant_con_volteos[NumRep] == 4) { // esto es cuando si hay un numero que volteado es el repetido
+                        int cuantosLanzo = 0;
+                        bool lanzaDadosobrante = false;
+                        
+                        for (int j : actuacionesPosibles[i].indiceDados) {
+                            // y aqui creo que conviene lanzar el que no es el numero ni el volteado, para no perder mi jugada
+                            if (dados[j] != NumRep && (7 - dados[j] != NumRep)) {
+                                cuantosLanzo++;
+                                lanzaDadosobrante = true;
+                            }
+                        }
+                        
+                        if (cuantosLanzo == 1 && lanzaDadosobrante) {
+                            mejorOpcionLanzar = i;
+                            break;
+                        }
                     }    
                 }
             }
@@ -162,8 +182,8 @@ public:
             for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
                 if (actuacionesPosibles[i].accion == "lanzar") {
                     
-                    
-                    if (maxRepetidos == 3) {
+                    //aqui se hace 1 o 2 lanzamientos considerando si hay un dado volteado que nos sirve o no
+                    if (maxRepetidos == 3 && cant_con_volteos[NumRep]== 3) {
                         int cuantosDelDuoLanza = 0;
                         bool lanzaOtrosDadosUtiles = false;
 
@@ -171,7 +191,7 @@ public:
                             if (dados[j] != NumRep) {
                                 cuantosDelDuoLanza++;
                             } else {
-                                // Si intenta tirar un dado del trío, está mal
+                                
                                 lanzaOtrosDadosUtiles = true; 
                             }
                         } 
@@ -181,7 +201,24 @@ public:
                             break;
                         }
                     }
-                    
+                    else if (maxRepetidos == 3 && cant_con_volteos[NumRep] == 4) { // esto es cuando si hay un numero que volteado es el repetido
+                        int cuantosLanzo = 0;
+                        bool lanzaDadosobrante = false;
+                        
+                        for (int j : actuacionesPosibles[i].indiceDados) {
+                            // y aqui creo que conviene lanzar el que no es el numero ni el volteado, para no perder mi jugada/posible jugada
+                            if (dados[j] != NumRep && (7 - dados[j] != NumRep)) {
+                                cuantosLanzo++;
+                                lanzaDadosobrante = true;
+                            }
+                        }
+                        
+                        if (cuantosLanzo == 1 && lanzaDadosobrante) {
+                            mejorOpcionLanzar = i;
+                            break;
+                        }
+                    }  
+                    //aqui basicamente es en el caso de que haya por ej 2 2 3 3 y x numero
                     else if (maxRepetidos == 2 && segundoNum_repetido_mismas_veces != -1) {
                         int lanzaDelPrimero = 0;
                         bool lanzaOtrosDados = false;
@@ -200,7 +237,7 @@ public:
                             break; 
                         }
                     }
-            
+                    //aqui ya es solo cuando hay por ej 2 2 1 3 6
                     else if (maxRepetidos == 2 && segundoNum_repetido_mismas_veces == -1) {
                         int lanzaDelPrimero = 0;
                         bool lanzaOtrosDados = false;
@@ -226,7 +263,7 @@ public:
             
             for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
                 if (actuacionesPosibles[i].accion == "lanzar") {
-            
+                    // en estos if me estoy tratando de deshacer de los repetidos menos 1
                     if (maxRepetidos == 2 && segundoNum_repetido_mismas_veces != -1) {
                         int lanzaDelPrimero = 0;
                         int lanzaDelSegundo = 0;
@@ -272,222 +309,83 @@ public:
                 }
             }
         }
-        else if (!marcadores.at(nombre).yaAnotado("senas")) {
+        std::vector<std::string> nombresLaterales = {"senas", "quinas", "cuadras", "trenes", "tontos", "balas"};
+        //con este bloque busco lanzar los que no son los repetidos y que volteados tampoco lo son
+        for (size_t k = 0; k < nombresLaterales.size(); ++k) {
             
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    
-                    if (maxRepetidos == 3 && NumRep == 6) {
-                        int cuantosLanzo = 0;
-                        bool lanzaOtrosDadosUtiles = false;
+            if (!marcadores.at(nombre).yaAnotado(nombresLaterales[k])) {
+                
+                int dadoObjetivo = 6 - k; 
 
-                        for (int j : actuacionesPosibles[i].indiceDados) {
-                            if (dados[j] != NumRep ) {
-                                cuantosLanzo++;
-                            } else {
-                                
-                                lanzaOtrosDadosUtiles = true; 
+                for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
+                    if (actuacionesPosibles[i].accion == "lanzar") {
+                        
+                        if (maxRepetidos == 3 && NumRep == dadoObjetivo && cant_con_volteos[NumRep]==3) {
+                            int cuantosLanzo = 0;
+                            bool lanzaOtrosDadosUtiles = false;
+
+                            for (int j : actuacionesPosibles[i].indiceDados) {
+                                if (dados[j] != NumRep) {
+                                    cuantosLanzo++;
+                                } else {
+                                    lanzaOtrosDadosUtiles = true; 
+                                }
+                            }
+                        
+                            if (cuantosLanzo == 2 && !lanzaOtrosDadosUtiles) {
+                                mejorOpcionLanzar = i;
+                                break;
+                            }
+                        }    
+                        else if (maxRepetidos == 3 && NumRep == dadoObjetivo && cant_con_volteos[NumRep]==4) {
+                            int cuantosLanzo = 0;
+                            bool lanzaDadosobrante = false;
+                            
+                            for (int j : actuacionesPosibles[i].indiceDados) {
+                                // y aqui creo que conviene lanzar el que no es el numero ni el volteado, para no perder mi jugada/posible jugada
+                                if (dados[j] != NumRep && (7 - dados[j] != NumRep)) {
+                                    cuantosLanzo++;
+                                    lanzaDadosobrante = true;
+                                }
+                            }
+                            
+                            if (cuantosLanzo == 1 && lanzaDadosobrante) {
+                                mejorOpcionLanzar = i;
+                                break;
                             }
                         }
-                       
-                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
-                            mejorOpcionLanzar = i;
-                            break;
-                        }
-                    }    
+                    }
+                }
+        
+            if (mejorOpcionLanzar != -1) {
+                break;
                 }
             }
         }
-        else if (!marcadores.at(nombre).yaAnotado("quinas")) {
-            
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    
-                    if (maxRepetidos == 3 && NumRep == 5) {
-                        int cuantosLanzo = 0;
-                        bool lanzaOtrosDadosUtiles = false;
-
-                        for (int j : actuacionesPosibles[i].indiceDados) {
-                            if (dados[j] != NumRep ) {
-                                cuantosLanzo++;
-                            } else {
-                                
-                                lanzaOtrosDadosUtiles = true; 
-                            }
-                        }
-                       
-                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
-                            mejorOpcionLanzar = i;
-                            break;
-                        }
-                    }    
-                }
-            }
-        }
-        else if (!marcadores.at(nombre).yaAnotado("cuadras")) {
-            
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    
-                    if (maxRepetidos == 3 && NumRep == 4) {
-                        int cuantosLanzo = 0;
-                        bool lanzaOtrosDadosUtiles = false;
-
-                        for (int j : actuacionesPosibles[i].indiceDados) {
-                            if (dados[j] != NumRep ) {
-                                cuantosLanzo++;
-                            } else {
-                                // Si intenta tirar un dado del trío, está mal
-                                lanzaOtrosDadosUtiles = true; 
-                            }
-                        }
-                       
-                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
-                            mejorOpcionLanzar = i;
-                            break;
-                        }
-                    }    
-                }
-            }
-        }
-        else if (!marcadores.at(nombre).yaAnotado("trenes")) {
-            
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    
-                    if (maxRepetidos == 3 && NumRep == 3) {
-                        int cuantosLanzo = 0;
-                        bool lanzaOtrosDadosUtiles = false;
-
-                        for (int j : actuacionesPosibles[i].indiceDados) {
-                            if (dados[j] != NumRep ) {
-                                cuantosLanzo++;
-                            } else {
-                                
-                                lanzaOtrosDadosUtiles = true; 
-                            }
-                        }
-                       
-                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
-                            mejorOpcionLanzar = i;
-                            break;
-                        }
-                    }    
-                }
-            }
-        }
-        else if (!marcadores.at(nombre).yaAnotado("tontos")) {
-            
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    
-                    if (maxRepetidos == 3 && NumRep == 2) {
-                        int cuantosLanzo = 0;
-                        bool lanzaOtrosDadosUtiles = false;
-
-                        for (int j : actuacionesPosibles[i].indiceDados) {
-                            if (dados[j] != NumRep ) {
-                                cuantosLanzo++;
-                            } else {
-                                
-                                lanzaOtrosDadosUtiles = true; 
-                            }
-                        }
-                       
-                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
-                            mejorOpcionLanzar = i;
-                            break;
-                        }
-                    }    
-                }
-            }
-        }
-        else if (!marcadores.at(nombre).yaAnotado("balas")) {
-            
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    
-                    if (maxRepetidos == 3 && NumRep == 1) {
-                        int cuantosLanzo = 0;
-                        bool lanzaOtrosDadosUtiles = false;
-
-                        for (int j : actuacionesPosibles[i].indiceDados) {
-                            if (dados[j] != NumRep ) {
-                                cuantosLanzo++;
-                            } else {
-                                
-                                lanzaOtrosDadosUtiles = true; 
-                            }
-                        }
-                       
-                        if (cuantosLanzo == 2 &&!lanzaOtrosDadosUtiles) {
-                            mejorOpcionLanzar = i;
-                            break;
-                        }
-                    }    
-                }
-            }
-        }
+        //si encontro algo para lanzar dentro de algun if lo retorna
         if (mejorOpcionLanzar != -1) {
             return mejorOpcionLanzar;
         }
-        if (mejorOpcionLanzar == -1) {
-            for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
-                if (actuacionesPosibles[i].accion == "lanzar") {
-                    mejorOpcionLanzar = i;
-                    break;
-                }
-            }
-        }
-        
         
         int indiceMejorPuntaje = -1;
-
+        //aqui llegaria si no pudo anotar algo grande como poker, full, etc,
+        //Y pienso de que si no tengo la mitad o mas de los dados no conviene realmente anotar aqui
         for (size_t i = 0; i < actuacionesPosibles.size(); ++i) {
             if (actuacionesPosibles[i].accion == "anotar") {
-                if(actuacionesPosibles[i].anotacion.juego == "senas"){
-                    if (actuacionesPosibles[i].anotacion.puntos >= 18) {
-                        indiceMejorPuntaje = i;
-                        break;
+                for (size_t k = 0; k < nombresLaterales.size(); ++k) {
+                    if (actuacionesPosibles[i].anotacion.juego == nombresLaterales[k]) {
+                        int puntajeMinimo = 18 - (3 * k); // k=0(senas) 18 pts min, k=1(quinas) 15, ...
+                        if (actuacionesPosibles[i].anotacion.puntos >= puntajeMinimo) {
+                            indiceMejorPuntaje = i;
+                            break;
+                        }
                     }
                 }
-                else if(actuacionesPosibles[i].anotacion.juego == "quinas"){
-                    if (actuacionesPosibles[i].anotacion.puntos >= 15) {
-                       
-                        indiceMejorPuntaje = i;
-                        break;
-                    }
-                }
-                else if(actuacionesPosibles[i].anotacion.juego == "cuadras"){
-                    if (actuacionesPosibles[i].anotacion.puntos >= 12) {
-                        
-                        indiceMejorPuntaje = i;
-                        break;
-                    }
-                }
-                else if(actuacionesPosibles[i].anotacion.juego == "trenes"){
-                    if (actuacionesPosibles[i].anotacion.puntos >= 9) {
-                        
-                        indiceMejorPuntaje = i;
-                        break;
-                    }
-                }
-                else if(actuacionesPosibles[i].anotacion.juego == "tontos"){
-                    if (actuacionesPosibles[i].anotacion.puntos >= 6) {
-                        
-                        indiceMejorPuntaje = i;
-                        break;
-                    }
-                }
-                else if(actuacionesPosibles[i].anotacion.juego == "balas"){
-                    if (actuacionesPosibles[i].anotacion.puntos >= 3) {
-                        
-                        indiceMejorPuntaje = i;
-                        break;
-                    }
-                }
+                if (indiceMejorPuntaje != -1) break;
             }
         }
+        //si llego aqui es que ninguna jugada pensada me llevo a algo que me convenia, por lo que me gustaria
+        //anotar algo que me de puntos, pero no me haga perder una jugada buena
         if (indiceMejorPuntaje == -1){
             std::vector<std::string> prioridad = {"balas", "tontos", "trenes", "cuadras", "quinas", "senas", "escalera", "full", "poker", "grande", "grande2"};
             bool encontrado = false;
@@ -508,13 +406,15 @@ public:
         if (indiceMejorPuntaje != -1) {
             return indiceMejorPuntaje;
         }
-
+        //si ya no pude hacer nada y me dan la opcion de lanzar, lanzo.
         for (int i = 0; i < (int)actuacionesPosibles.size(); ++i) {
             if (actuacionesPosibles[i].accion == "lanzar") {
                 return i;
             }
         }
 
+
+        //si llegue aqui es porque ya no tengo nada mas que hacer que tachar, y lo hacer en esta lista de prioridad
         std::vector<std::string> ordenTachar = {"balas", "tontos", "trenes", "cuadras", "quinas", "senas", "escalera", "full", "poker", "grande", "grande2"};
         for (const std::string& jugadaATachar : ordenTachar) {
             if (!marcadores.at(nombre).yaAnotado(jugadaATachar)) {
