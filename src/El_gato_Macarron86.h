@@ -25,7 +25,7 @@ public:
               const std::vector<int> &dados,
               const Anotacion &) override {
 
-        // si sale casualmente una dormida, la tomamos
+        // si sale casualmente una dormida, tomamos la jugada
         for (size_t i = 0; i < actuacionesPosibles.size(); ++i) {
             if (actuacionesPosibles[i].accion == "dormida") {
                 return i; 
