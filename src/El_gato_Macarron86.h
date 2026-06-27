@@ -13,8 +13,11 @@ private:
 
 public:
     
-    El_gato_Macarron86(std::string nom): Jugador(nom) {
+    El_gato_Macarron86() {
         nombreEstudiante = "Amelia Rebeca Araya Vera"; 
+    }
+    std::string getNombreEstudiante() const{
+        return nombreEstudiante;
     }
 
     int jugar(const std::map<std::string, Marcador> &marcadores,
